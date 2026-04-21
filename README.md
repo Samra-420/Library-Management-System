@@ -124,11 +124,11 @@ http://127.0.0.1:5000/
 
 ### 🟢 Admin Dashboard
 
-![Admin Dashboard](image1.png)
+![Admin Dashboard](admin_dashboard.png)
 
 ### 🔵 User Dashboard
 
-![User Dashboard](image2.png)
+![User Dashboard](user_dashboard.png)
 
 ---
 
