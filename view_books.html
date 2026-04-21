@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>View Books</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #121212; /* Dark background */
+            color: #eee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        h2.page-title {
+            text-align: center;
+            font-weight: 800;
+            font-size: 2.8rem;
+            margin-bottom: 60px;
+            color: #1db954; /* Spotify green for accent */
+            text-shadow: 0 0 8px #1db954aa;
+        }
+
+        /* Genre container styling */
+        .genre-section {
+            margin-bottom: 50px;
+            padding: 20px 15px;
+            border-radius: 12px;
+            background: #1e1e1e;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+            border-left: 6px solid #1db954;
+            transition: border-color 0.3s ease;
+        }
+        .genre-section:hover {
+            border-color: #1ed760;
+        }
+
+        .genre-heading {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #1db954;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            user-select: none;
+        }
+
+        /* Book card styling */
+        .book-card {
+            background-color: #2a2a2a;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(29, 185, 84, 0.8);
+            border: 2px solid #1db954;
+        }
+
+        /* Book image styling */
+        .book-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 1px solid #444;
+            background: #444;
+        }
+
+        /* Book info */
+        .book-info {
+            padding: 15px 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .book-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f1f1f1;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            user-select: text;
+        }
+
+        .book-detail {
+            font-size: 0.9rem;
+            color: #bbb;
+            margin-bottom: 5px;
+        }
+
+        .book-status {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #f39c12; /* bright orange */
+            margin-top: 10px;
+            user-select: none;
+        }
+
+        /* Back button */
+        .back-btn {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .btn-custom {
+            background: #1db954;
+            color: white;
+            font-weight: 700;
+            padding: 12px 36px;
+            border-radius: 30px;
+            border: none;
+            box-shadow: 0 8px 20px rgba(29, 185, 84, 0.6);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-custom:hover {
+            background: #1ed760;
+            color: white;
+            box-shadow: 0 12px 30px rgba(29, 215, 104, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h2 class="page-title">Books Categories</h2>
+
+        {% set genre_colors = ['#1db954', '#17a2b8', '#e83e8c', '#ffc107', '#6f42c1'] %}
+        {% set color_index = 0 %}
+
+        {% for genre, books in books_by_genre.items() %}
+        <div class="genre-section" style="border-left-color: {{ genre_colors[color_index % genre_colors|length] }};">
+            <div class="genre-heading" style="color: {{ genre_colors[color_index % genre_colors|length] }};">{{ genre }}</div>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                {% for book in books %}
+                <div class="col">
+                    <div class="book-card" tabindex="0" role="article" aria-label="{{ book.title }} by {{ book.author }}">
+                        <!-- Use book.image_url if available, else fallback image -->
+                        <img src="{{ book.image_url if book.image_url else url_for('static', filename='images/book_placeholder.png') }}" 
+                             alt="Cover image of {{ book.title }}" class="book-image" />
+                        <div class="book-info">
+                            <div class="book-title">{{ book.title }}</div>
+                            <div class="book-detail">Author: {{ book.author }}</div>
+                            <div class="book-detail">Year: {{ book.year }}</div>
+                            <div class="book-detail">ISBN: {{ book.isbn }}</div>
+                            <div class="book-detail">Quantity: {{ book.quantity }}</div>
+                            {% if book.get('status') %}
+                            <div class="book-status">Status: {{ book.status|capitalize }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% set color_index = color_index + 1 %}
+        {% endfor %}
+
+        <div class="back-btn">
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-custom"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Issue Book</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Issue a Book</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="user_id" class="form-label">User ID</label>
+                <input type="text" class="form-control" id="user_id" name="user_id" required />
+            </div>
+            <div class="mb-3">
+                <label for="book_id" class="form-label">Book ID</label>
+                <input type="text" class="form-control" id="book_id" name="book_id" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Issue Book</button>
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Back</a>
+        </form>
+    </div>
+</body>
+</html>

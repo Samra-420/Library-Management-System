@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Issue History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to right, #dbeafe, #e0f7fa);
+            font-family: 'Segoe UI', sans-serif;
+            padding-top: 50px;
+        }
+        .container {
+            max-width: 1000px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        table th {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+        }
+        table td {
+            vertical-align: middle;
+        }
+        .back-btn {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: block;
+            width: fit-content;
+            margin: 20px auto 0;
+            font-weight: 600;
+        }
+        .back-btn:hover {
+            background-color: #388e3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Issue History</h2>
+        {% if history %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Issue Date</th>
+                    <th>Return Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in history %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.issue_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        {% if book.return_date %}
+                            {{ book.return_date.strftime('%Y-%m-%d %H:%M:%S') }}
+                        {% else %}
+                            <span class="text-danger fw-semibold">Not Returned</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-center fst-italic">No history found.</p>
+        {% endif %}
+        <a href="{{ url_for('user_dashboard') }}" class="back-btn">Back to Dashboard</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Edit Book</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #ffffff; /* white background like other forms */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #f8f9fa; /* light grey like other forms */
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #198754;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        label {
+            font-weight: 600;
+        }
+        .btn-save, .btn-cancel {
+            background-color: #198754;
+            color: white;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-save:hover, .btn-cancel:hover {
+            background-color: #146c43;
+            text-decoration: none;
+        }
+        .btn-cancel {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Book</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" id="title" name="title" class="form-control" value="{{ book.title }}" required />
+            </div>
+            <div class="mb-3">
+                <label for="author" class="form-label">Author</label>
+                <input type="text" id="author" name="author" class="form-control" value="{{ book.author }}" required />
+            </div>
+            <div class="mb-3">
+                <label for="isbn" class="form-label">ISBN</label>
+                <input type="text" id="isbn" name="isbn" class="form-control" value="{{ book.isbn }}" />
+            </div>
+            <div class="mb-3">
+                <label for="published_year" class="form-label">Published Year</label>
+                <input type="number" id="published_year" name="published_year" class="form-control" value="{{ book.published_year }}" />
+            </div>
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" value="{{ book.quantity }}" required min="0" />
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn-save">Save Changes</button>
+                <a href="{{ url_for('manage_books') }}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

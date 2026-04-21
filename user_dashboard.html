@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>User Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background-color: #0f362d;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+            width: 220px;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s ease;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #157347;
+            border-left: 4px solid white;
+        }
+
+        .main {
+            margin-left: 220px;
+        }
+
+        .top-navbar {
+            background-color: #0f362d;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-navbar h4 {
+            margin: 0;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            font-weight: 500;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .card-stat {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .card-stat h5 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .card-stat .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .bg-overdue {
+            background-color: #dc3545;
+        }
+
+        .bg-returned {
+            background-color: #198754;
+        }
+
+        .bg-fine {
+            background-color: #ffc107;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" role="navigation" aria-label="User Dashboard Sidebar">
+        <h2>User Panel</h2>
+        <a href="{{ url_for('view_books') }}" class="active"><i class="bi bi-book"></i>View All Books</a>
+        <a href="{{ url_for('view_available_books') }}"><i class="bi bi-bookmark-check"></i>Available Books</a>
+        <a href="{{ url_for('view_issued_books') }}"><i class="bi bi-book-half"></i>Issued Books</a>
+        <a href="{{ url_for('issue_book') }}"><i class="bi bi-box-arrow-in-down"></i>Issue a Book</a>
+        <a href="{{ url_for('issue_history') }}"><i class="bi bi-clock-history"></i>Issue History</a>
+        <a href="{{ url_for('profile') }}"><i class="bi bi-person-circle"></i>Profile</a>
+        <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i>Logout</a>
+    </div>
+
+    <div class="main" role="main">
+        <div class="top-navbar">
+            <h4>Welcome, {{ username }}</h4>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+
+        <div class="content" aria-label="User Dashboard Content">
+            <h3>User Statistics</h3>
+            <div class="row g-4 mt-3">
+                <div class="col-md-4">
+                    <div class="card-stat bg-overdue">
+                        <h5><i class="bi bi-exclamation-circle-fill"></i> Overdue Books</h5>
+                        <div class="stat-value">{{ overdue_books }}</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-stat bg-returned">
+                        <h5><i class="bi bi-check-circle-fill"></i> Returned Books</h5>
+                        <div class="stat-value">{{ returned_books }}</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-stat bg-fine">
+                        <h5><i class="bi bi-cash-coin"></i> Total Fine</h5>
+                        <div class="stat-value">₹ {{ total_fine }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart container with smaller size like admin dashboard -->
+            <div class="mt-5" style="max-width: 500px; margin: auto;">
+                <canvas id="userStatsChart" aria-label="User Statistics Chart" role="img" style="width: 100%; height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('userStatsChart').getContext('2d');
+        const userStatsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Overdue Books', 'Returned Books', 'Total Fine (₹)'],
+                datasets: [{
+                    label: 'User Statistics',
+                    data: [
+                        {{ overdue_books }},
+                        {{ returned_books }},
+                        {{ total_fine }}
+                    ],
+                    backgroundColor: [
+                        'rgba(220, 53, 69, 0.7)',  // red-ish
+                        'rgba(25, 135, 84, 0.7)',  // green-ish
+                        'rgba(255, 193, 7, 0.7)'   // yellow-ish
+                    ],
+                    borderColor: [
+                        'rgba(220, 53, 69, 1)',
+                        'rgba(25, 135, 84, 1)',
+                        'rgba(255, 193, 7, 1)'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
